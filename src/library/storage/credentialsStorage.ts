@@ -2,7 +2,7 @@ import { TableClient } from '@azure/data-tables';
 import { DefaultAzureCredential } from '@azure/identity';
 import { DestinyOAuth } from '../destiny/models/destinyOAuth';
 
-type CredentialsStorage = {
+export type CredentialsStorage = {
 	getUserAsync: () => Promise<DestinyOAuth>;
 	setUserAsync: (user: DestinyOAuth) => Promise<void>;
 };

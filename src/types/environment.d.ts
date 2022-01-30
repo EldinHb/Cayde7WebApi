@@ -4,5 +4,6 @@ declare namespace NodeJS {
 		DESTINYCLIENTID: string | undefined;
 		STORAGEACCOUNT: string | undefined;
 		CREDENTIALSTORAGENAME: string | undefined;
+		DESTINYAPIKEY: string | undefined;
 	}
 }

@@ -5,7 +5,9 @@ import helmet from 'helmet';
 import statusCodes from 'http-status-codes';
 import https from 'https';
 import Logger from 'jet-logger';
+import { DestinyApiMiddleware } from './middleware/destinyApiMiddleware';
 import { Logger as customLogger } from './middleware/logger';
+import { StorageMiddleware } from './middleware/storageMiddleware';
 import baseRouter from './routes';
 
 const { BAD_REQUEST } = statusCodes;
@@ -20,6 +22,8 @@ const server = https.createServer({ key, cert }, app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(StorageMiddleware);
+app.use(DestinyApiMiddleware);
 
 if (process.env.NODE_ENV === 'development') {
 	app.use(customLogger);

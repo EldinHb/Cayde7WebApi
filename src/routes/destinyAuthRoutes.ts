@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { authenticate } from '../controllers/destinyAuthController';
+import { authenticate, testDing } from '../controllers/destinyAuthController';
 
 const DestinyAuthRouter = Router();
 
 DestinyAuthRouter.get('/', authenticate);
+DestinyAuthRouter.get('/testding', testDing);
 
 export { DestinyAuthRouter };
