@@ -39,7 +39,6 @@ module.exports = {
 		'no-await-in-loop': 'error',
 		'no-unreachable': 'error',
 		'object-curly-spacing': ['error', 'always'],
-		'arrow-body-style': ['error', 'as-needed'],
 		'camelcase': 'error',
 		'curly': ['error', 'all'],
 		'jsx-quotes': ['error', 'prefer-single'],

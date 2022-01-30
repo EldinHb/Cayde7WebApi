@@ -38,4 +38,5 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 	});
 });
 
-export default server;
+export { app, server };
+
