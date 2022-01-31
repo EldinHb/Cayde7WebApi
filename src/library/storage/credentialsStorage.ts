@@ -2,37 +2,25 @@ import { TableClient } from '@azure/data-tables';
 import { DefaultAzureCredential } from '@azure/identity';
 import { DestinyOAuth } from '../destiny/models/destinyOAuth';
 
-export type CredentialsStorage = {
-	getUserAsync: () => Promise<DestinyOAuth>;
-	setUserAsync: (user: DestinyOAuth) => Promise<void>;
-};
-
-export const CredentialsTableStorage = (): CredentialsStorage => {
-	const account = process.env.STORAGEACCOUNT;
-	const tableName = process.env.CREDENTIALSTORAGENAME;
-
-	if (!account || !tableName) {
-		throw Error('Cannot find environment variables');
-	}
-
-	const credentials = new DefaultAzureCredential();
-
+export const createCredentialsTable = (storageAccount: string, tableName: string) => {
 	const client = new TableClient(
-		`https://${account}.table.core.windows.net`,
+		`https://${storageAccount}.table.core.windows.net`,
 		tableName,
-		credentials
+		new DefaultAzureCredential()
 	);
 
 	client.createTable();
 
-	return {
-		getUserAsync: async function () {
-			const user: DestinyOAuth = (await client.listEntities().next()).value;
-			return user;
-		},
-		setUserAsync: async function (user: DestinyOAuth) {
-			user.timestamp = new Date();
-			await client.upsertEntity(user);
-		}
-	};
+	return client;
+};
+
+export const saveCredentialsAsync = async (client: TableClient, user: DestinyOAuth) => {
+	user.timestamp = new Date();
+	user.partitionKey = user.membership_id;
+	user.rowKey = user.token_type;
+	await client.upsertEntity(user);
+};
+
+export const getCredentialsAsync = async (client: TableClient): Promise<DestinyOAuth> => {
+	return (await client.listEntities().next()).value;
 };

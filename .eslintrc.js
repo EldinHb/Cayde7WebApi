@@ -52,7 +52,7 @@ module.exports = {
 		'unused-imports/no-unused-vars': 'warn',
 		'no-unused-vars': 'off',
 		'max-len': ['error', {
-			'code': 100
+			'code': 120
 		}],
 		'eqeqeq': 'warn',
 		'arrow-spacing': 'error'

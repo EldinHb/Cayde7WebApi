@@ -1,12 +1,14 @@
 // eslint-disable-next-line unused-imports/no-unused-imports
-import { DestinyApi } from '../../library/destiny/destinyApi';
-import { CredentialsStorage } from '../../library/storage/credentialsStorage';
+import { TableClient } from '@azure/data-tables';
+import { AxiosInstance } from 'axios';
+import { DestinyOAuth } from '../../library/destiny/models/destinyOAuth';
 
 declare global {
 	namespace Express {
 		interface Request {
-			credentialsStorage?: CredentialsStorage;
-			destinyApi?: DestinyApi;
+			credentialsStorage: TableClient;
+			destinyUser: DestinyOAuth;
+			destinyClient: AxiosInstance;
 		}
 	}
 }
