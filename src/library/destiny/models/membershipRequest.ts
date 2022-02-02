@@ -1,7 +1,3 @@
-export type MembershipRequest = {
-	Response: MembershipResponse;
-};
-
 export type MembershipResponse = {
 	primaryMembershipId: string;
 	destinyMemberships: DestinyMembership[];

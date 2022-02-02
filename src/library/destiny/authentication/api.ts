@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { URLSearchParams } from 'url';
 import { DestinyOAuth } from '../models/destinyOAuth';
 
@@ -11,19 +11,18 @@ export interface AuthenticationConfig {
 	code: string;
 }
 
-export async function authenticateDestiny(config: AuthenticationConfig): Promise<DestinyOAuth> {
+export async function authenticateDestiny(config: AuthenticationConfig): Promise<AxiosResponse<DestinyOAuth>> {
 	const data = new URLSearchParams();
 	data.append('grant_type', 'authorization_code');
 	data.append('code', config.code);
 	data.append('client_id', config.clientId);
 	data.append('client_secret', config.clientSecret);
 
-	const response = await axios({
-		url: 'https://www.bungie.net/Platform/App/OAuth/token/',
-		method: 'POST',
-		data
+	const response = await axios.post<DestinyOAuth>('https://www.bungie.net/Platform/App/OAuth/token/', {
+		data,
+		validateStatus: () => true
 	});
-	return response.data;
+	return response;
 }
 
 export const refreshTokenDestiny = async (config: AuthenticationConfig) => {
@@ -33,11 +32,10 @@ export const refreshTokenDestiny = async (config: AuthenticationConfig) => {
 	data.append('client_id', config.clientId);
 	data.append('client_secret', config.clientSecret);
 
-	const response = await axios({
-		url: 'https://www.bungie.net/Platform/App/OAuth/token/',
-		method: 'POST',
-		data
+	const response = await axios.post<DestinyOAuth>('https://www.bungie.net/Platform/App/OAuth/token/', {
+		data,
+		validateStatus: () => true
 	});
 
-	return response.data;
+	return response;
 };

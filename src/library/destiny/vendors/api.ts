@@ -1,4 +1,4 @@
-import { AxiosInstance } from 'axios';
+import { AxiosInstance, AxiosResponse } from 'axios';
 import { Components } from '../models/components';
 
 interface VendorParam {
@@ -8,7 +8,7 @@ interface VendorParam {
 	vendorHash: string;
 	components: Components[];
 }
-export const getVendor = async <T>(client: AxiosInstance, param: VendorParam): Promise<T> => {
+export const getVendor = async <T>(client: AxiosInstance, param: VendorParam): Promise<AxiosResponse<T>> => {
 	const url =
 		'/platform' +
 		'/destiny2' +
@@ -21,10 +21,6 @@ export const getVendor = async <T>(client: AxiosInstance, param: VendorParam): P
 		`/${param.vendorHash}` +
 		`/?components=${param.components.join(',')}`;
 
-	const response = await client({
-		url,
-		method: 'GET'
-	});
-
-	return response.data;
+	const response = await client.get<T>(url);
+	return response;
 };

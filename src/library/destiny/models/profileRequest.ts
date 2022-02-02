@@ -1,7 +1,3 @@
-export interface ProfileRequest {
-	Response: ProfileResponse;
-}
-
 export interface ProfileResponse {
 	characters: Characters;
 }

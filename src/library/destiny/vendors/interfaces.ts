@@ -1,8 +1,4 @@
-export interface VendorSalesRequest {
-	Response: VendorSalesResponse;
-}
-
-export interface VendorSalesResponse {
+export interface VendorSales {
 	sales: Sales;
 }
 

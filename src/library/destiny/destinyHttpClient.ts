@@ -11,6 +11,7 @@ export function createHttpClient(config: DestinyApiConfig) {
 		headers: {
 			'X-API-Key': config.apiKey,
 			'Authorization': `Bearer ${config.accessToken}`
-		}
+		},
+		validateStatus: () => true
 	});
 }

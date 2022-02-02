@@ -1,15 +1,14 @@
-import { AxiosInstance } from 'axios';
+import { AxiosInstance, AxiosResponse } from 'axios';
+import { ServerResponse } from '../common';
 import { Components } from '../models/components';
-import { MembershipRequest } from '../models/membershipRequest';
+import { MembershipResponse } from '../models/membershipRequest';
 
-export const getDestinyMembershipData = async (client: AxiosInstance): Promise<MembershipRequest> => {
-	const url = '/Platform/User/GetMembershipsForCurrentUser/';
-	const response = await client({
-		url,
-		method: 'GET'
-	});
-	return response.data;
-};
+export const getDestinyMembershipData =
+	async (client: AxiosInstance): Promise<AxiosResponse<ServerResponse<MembershipResponse>>> => {
+		const url = '/Platform/User/GetMembershipsForCurrentUser/';
+		const response = await client.get(url);
+		return response;
+	};
 
 export interface GetCharactersParam {
 	membershipType: number;
@@ -17,7 +16,7 @@ export interface GetCharactersParam {
 	components: Components[];
 }
 
-export const getProfile = async <T>(client: AxiosInstance, param: GetCharactersParam): Promise<T> => {
+export const getProfile = async <T>(client: AxiosInstance, param: GetCharactersParam): Promise<AxiosResponse<T>> => {
 	const url =
 		'/platform' +
 		'/destiny2' +
@@ -26,10 +25,6 @@ export const getProfile = async <T>(client: AxiosInstance, param: GetCharactersP
 		`/${param.membershipId}` +
 		`/?components=${param.components.join(',')}`;
 
-	const response = await client({
-		method: 'GET',
-		url
-	});
-
-	return response.data;
+	const response = await client.get<T>(url);
+	return response;
 };
