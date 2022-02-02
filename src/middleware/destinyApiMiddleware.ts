@@ -11,11 +11,9 @@ export const DestinyApiMiddleware = async (req: Request, res: Response, next: Ne
 	if (!req.credentialsStorage) {
 		throw Error('Use me after credentialsstorage middleware!');
 	}
-	const start = moment();
-	const user = await getCredentialsAsync(req.credentialsStorage);
-	const end = moment();
 
-	console.log(end.diff(start, 'ms'));
+	const user = await getCredentialsAsync(req.credentialsStorage);
+
 	const timestamp = moment(user.timestamp).add(user.expires_in, 'seconds');
 	const now = moment();
 	const destinyUser = timestamp.isBefore(now) ?
