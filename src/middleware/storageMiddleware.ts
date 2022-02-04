@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { createCredentialsTable } from '../library/storage/credentialsStorage';
+import { createCredentialsTable } from '../library/storage/client';
 
 export const StorageMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 	const storageAccount = process.env.STORAGEACCOUNT;

@@ -20,7 +20,9 @@ export async function authenticateDestiny(config: AuthenticationConfig): Promise
 
 	const response = await axios.post<DestinyOAuth>('https://www.bungie.net/Platform/App/OAuth/token/', {
 		data,
-		validateStatus: () => true
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		}
 	});
 	return response;
 }
@@ -32,10 +34,18 @@ export const refreshTokenDestiny = async (config: AuthenticationConfig) => {
 	data.append('client_id', config.clientId);
 	data.append('client_secret', config.clientSecret);
 
-	const response = await axios.post<DestinyOAuth>('https://www.bungie.net/Platform/App/OAuth/token/', {
-		data,
-		validateStatus: () => true
-	});
+	try {
+		const response = await axios('https://www.bungie.net/Platform/App/OAuth/token/', {
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			data,
+			method: 'POST'
+		});
 
-	return response;
+		return response;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };

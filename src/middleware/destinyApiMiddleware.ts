@@ -7,7 +7,6 @@ import { DestinyOAuth } from '../library/destiny/models/destinyOAuth';
 import { getCredentialsAsync, saveCredentialsAsync } from '../library/storage/credentialsStorage';
 
 export const DestinyApiMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-
 	if (!req.credentialsStorage) {
 		throw Error('Use me after credentialsstorage middleware!');
 	}
@@ -42,6 +41,11 @@ const refreshToken = async (refreshToken: string, storage: TableClient): Promise
 		clientSecret: process.env.DESTINYCLIENTSECRET || '',
 		code: refreshToken
 	});
-	await saveCredentialsAsync(storage, refreshedUser);
-	return refreshedUser;
+
+	if (!refreshedUser) {
+		throw Error('something went wrong while refreshing token!');
+	}
+
+	await saveCredentialsAsync(storage, refreshedUser.data);
+	return refreshedUser.data;
 };

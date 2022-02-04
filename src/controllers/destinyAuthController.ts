@@ -31,7 +31,7 @@ export const authenticate = async (req: Request, res: Response) => {
 export const testDing = async (req: Request, res: Response) => {
 	const membershipData = await getDestinyMembershipData(req.destinyClient);
 
-	if (isSuccesStatusCode(membershipData)) {
+	if (!isSuccesStatusCode(membershipData)) {
 		return res.status(StatusCodes.BAD_REQUEST).json('error getting membershipdata');
 	}
 

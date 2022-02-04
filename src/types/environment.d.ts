@@ -5,5 +5,6 @@ declare namespace NodeJS {
 		STORAGEACCOUNT: string | undefined;
 		CREDENTIALSTORAGENAME: string | undefined;
 		DESTINYAPIKEY: string | undefined;
+		CAYDE7APIKEY: string | undefined;
 	}
 }
