@@ -13,3 +13,10 @@ export const isSuccesStatusCode = (response: AxiosResponse) => {
 
 	return false;
 };
+
+export interface ErrorMessage {
+	errorMessage: string;
+}
+export const createErrorMessage = (error: string): ErrorMessage => ({
+	errorMessage: error
+});
