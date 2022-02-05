@@ -1,42 +1,56 @@
 import cookieParser from 'cookie-parser';
+import { Client } from 'discord.js';
 import express, { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
 import helmet from 'helmet';
 import statusCodes from 'http-status-codes';
 import https from 'https';
 import Logger from 'jet-logger';
+import { DiscordMiddleware } from './middleware/discordMiddleware';
 import { Logger as customLogger } from './middleware/logger';
 import baseRouter from './routes';
 
-const { BAD_REQUEST } = statusCodes;
+export const setupServer = (discordClient: Client) => {
+	const { BAD_REQUEST } = statusCodes;
 
-const app = express();
+	const app = express();
 
-const key = fs.readFileSync('./sslcert/key.pem');
-const cert = fs.readFileSync('./sslcert/cert.pem');
+	const key = fs.readFileSync('./sslcert/key.pem');
+	const cert = fs.readFileSync('./sslcert/cert.pem');
 
-const server = https.createServer({ key, cert }, app);
+	const server = https.createServer({ key, cert }, app);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+	app.use(express.json());
+	app.use(express.urlencoded({ extended: true }));
+	app.use(cookieParser());
+	app.use((req, res, next) => DiscordMiddleware(req, res, next, discordClient));
 
-if (process.env.NODE_ENV === 'development') {
-	app.use(customLogger);
-}
+	if (process.env.NODE_ENV === 'development') {
+		app.use(customLogger);
+	}
 
-if (process.env.NODE_ENV === 'production') {
-	app.use(helmet());
-}
+	if (process.env.NODE_ENV === 'production') {
+		app.use(helmet());
+	}
 
-app.use('/api', baseRouter);
+	app.use('/api', baseRouter);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-	Logger.Err(err, true);
-	return res.status(BAD_REQUEST).json({
-		error: err.message,
+	app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+		Logger.Err(err, true);
+		return res.status(BAD_REQUEST).json({
+			error: err.message,
+		});
 	});
-});
 
-export { app, server };
+	const port = Number(process.env.PORT || 3000);
+	if (process.env.NODE_ENV === 'development') {
+		server.listen(port, () => {
+			console.log(`Express server listening on ${port} with self signed https`);
+		});
+	} else {
+		app.listen(port, () => {
+			console.log(`Express server listening on ${port}`);
+		});
+	}
+};
 

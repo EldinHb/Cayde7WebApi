@@ -1,12 +1,18 @@
-import { app, server } from './server';
+import { Client } from 'discord.js';
+import { setupServer } from './server';
 
-const port = Number(process.env.PORT || 3000);
-if (process.env.NODE_ENV === 'development') {
-	server.listen(port, () => {
-		console.log(`Express server listening on ${port} with self signed https`);
+const setupDiscord = async () => {
+	const discordClient = new Client({ intents: ['GUILDS'] });
+	discordClient.on('ready', async client => {
+		setupServer(client);
 	});
-} else {
-	app.listen(port, () => {
-		console.log(`Express server listening on ${port}`);
-	});
-}
+	const discordApikey = process.env.DISCORDAPIKEY;
+	if (!discordApikey) {
+		throw Error('Discord api key not set in env');
+	}
+	await discordClient.login(discordApikey);
+};
+
+(async () => {
+	await setupDiscord();
+})().catch(err => console.log(err));
