@@ -8,6 +8,7 @@ import { createErrorMessage } from '../library/httpHelpers';
 export const sendAdaSale = async (req: Request, res: Response) => {
 	try {
 		const modSales = await getAdaModSales(req.destinyClient);
+
 		const manifests = await getManifest(req.destinyClient);
 		const manifestUrl = manifests
 			.data
@@ -26,6 +27,7 @@ export const sendAdaSale = async (req: Request, res: Response) => {
 
 			return [];
 		});
+
 		await sendAdaSalesToDiscord(req.discordClient, mods);
 		return res.status(200).json(mods);
 	} catch (err) {

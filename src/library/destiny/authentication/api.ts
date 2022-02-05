@@ -18,11 +18,12 @@ export async function authenticateDestiny(config: AuthenticationConfig): Promise
 	data.append('client_id', config.clientId);
 	data.append('client_secret', config.clientSecret);
 
-	const response = await axios.post<DestinyOAuth>('https://www.bungie.net/Platform/App/OAuth/token/', {
+	const response = await axios('https://www.bungie.net/Platform/App/OAuth/token/', {
 		data,
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
-		}
+		},
+		method: 'POST'
 	});
 	return response;
 }

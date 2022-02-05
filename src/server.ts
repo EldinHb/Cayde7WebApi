@@ -14,11 +14,6 @@ export const setupServer = (discordClient: Client) => {
 
 	const app = express();
 
-	const key = fs.readFileSync('./sslcert/key.pem');
-	const cert = fs.readFileSync('./sslcert/cert.pem');
-
-	const server = https.createServer({ key, cert }, app);
-
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
 	app.use(cookieParser());
@@ -42,6 +37,10 @@ export const setupServer = (discordClient: Client) => {
 
 	const port = Number(process.env.PORT || 3000);
 	if (process.env.NODE_ENV === 'development') {
+		const key = fs.readFileSync('./sslcert/key.pem');
+		const cert = fs.readFileSync('./sslcert/cert.pem');
+
+		const server = https.createServer({ key, cert }, app);
 		server.listen(port, () => {
 			console.log(`Express server listening on ${port} with self signed https`);
 		});

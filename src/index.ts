@@ -8,6 +8,7 @@ const setupDiscord = async () => {
 	});
 	const discordApikey = process.env.DISCORDAPIKEY;
 	if (!discordApikey) {
+		console.log('Couldnt start server');
 		throw Error('Discord api key not set in env');
 	}
 	await discordClient.login(discordApikey);

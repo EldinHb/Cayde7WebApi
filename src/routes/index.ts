@@ -12,6 +12,7 @@ const baseRouter = Router();
 baseRouter.use('/example', exampleRouter);
 
 baseRouter.use('/destinyauth',
+	StorageMiddleware,
 	DestinyApiMiddleware,
 	DestinyAuthRouter
 );
