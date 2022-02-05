@@ -5,7 +5,6 @@ import fs from 'fs';
 import helmet from 'helmet';
 import statusCodes from 'http-status-codes';
 import https from 'https';
-import Logger from 'jet-logger';
 import { DiscordMiddleware } from './middleware/discordMiddleware';
 import { Logger as customLogger } from './middleware/logger';
 import baseRouter from './routes';
@@ -36,7 +35,6 @@ export const setupServer = (discordClient: Client) => {
 	app.use('/api', baseRouter);
 
 	app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-		Logger.Err(err, true);
 		return res.status(BAD_REQUEST).json({
 			error: err.message,
 		});
