@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { createCredentialsTable } from '../library/storage/client';
+import { AzureCredentialsStorage } from '../library/storage/azure/azureCredentialsStorage';
 
 export const StorageMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 	const storageAccount = process.env.STORAGEACCOUNT;
@@ -9,6 +9,6 @@ export const StorageMiddleware = async (req: Request, res: Response, next: NextF
 		throw Error('Storage environment variables not set!');
 	}
 
-	req.credentialsStorage = createCredentialsTable(storageAccount, tableName);
+	req.credentialsStorage = new AzureCredentialsStorage(storageAccount, tableName);
 	next();
 };

@@ -1,17 +1,16 @@
-import { TableClient } from '@azure/data-tables';
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
 import { refreshTokenDestiny } from '../library/destiny/authentication';
 import { createHttpClient } from '../library/destiny/destinyHttpClient';
 import { DestinyOAuth } from '../library/destiny/models/destinyOAuth';
-import { getCredentialsAsync, saveCredentialsAsync } from '../library/storage/credentialsStorage';
+import { CredentialsStorage } from '../library/storage/credentialsStorage';
 
 export const DestinyApiMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 	if (!req.credentialsStorage) {
 		throw Error('Use me after credentialsstorage middleware!');
 	}
 
-	const user = await getCredentialsAsync(req.credentialsStorage);
+	const user = await req.credentialsStorage.getCredentialsAsync();
 
 	const timestamp = moment(user.timestamp).add(user.expires_in, 'seconds');
 	const now = moment();
@@ -35,7 +34,7 @@ export const DestinyApiMiddleware = async (req: Request, res: Response, next: Ne
 	next();
 };
 
-const refreshToken = async (refreshToken: string, storage: TableClient): Promise<DestinyOAuth> => {
+const refreshToken = async (refreshToken: string, storage: CredentialsStorage): Promise<DestinyOAuth> => {
 	const refreshedUser = await refreshTokenDestiny({
 		clientId: process.env.DESTINYCLIENTID || '',
 		clientSecret: process.env.DESTINYCLIENTSECRET || '',
@@ -46,6 +45,6 @@ const refreshToken = async (refreshToken: string, storage: TableClient): Promise
 		throw Error('something went wrong while refreshing token!');
 	}
 
-	await saveCredentialsAsync(storage, refreshedUser.data);
+	await storage.saveCredentialsAsync(refreshedUser.data);
 	return refreshedUser.data;
 };

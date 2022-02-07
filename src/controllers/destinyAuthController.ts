@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { authenticateDestiny } from '../library/destiny/authentication';
 import { isSuccesStatusCode } from '../library/httpHelpers';
-import { saveCredentialsAsync } from '../library/storage/credentialsStorage';
 
 export const authenticate = async (req: Request, res: Response) => {
 	const code = req.query.code as string;
@@ -16,6 +15,6 @@ export const authenticate = async (req: Request, res: Response) => {
 		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json('Couldnt authenticate');
 	}
 
-	await saveCredentialsAsync(req.credentialsStorage, userResponse.data);
+	await req.credentialsStorage.saveCredentialsAsync(userResponse.data);
 	return res.status(StatusCodes.OK).json(userResponse.data.access_token);
 };

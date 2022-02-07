@@ -1,13 +1,8 @@
-import { TableClient } from '@azure/data-tables';
+export interface ApiKeyStorage {
+	getApiKeyAsync: (apiKey: string) => Promise<ApiCredentials | undefined>;
+}
 
-const apiKeyRowKey = 'apikey';
-
-export const getApiKey = async (client: TableClient, apiKey: string) => {
-	try {
-		const entity = await client.getEntity(apiKey, apiKeyRowKey);
-		return entity;
-	} catch (err) {
-		console.log(err);
-		return undefined;
-	}
-};
+export interface ApiCredentials {
+	apikey: string;
+	owner: string;
+}
