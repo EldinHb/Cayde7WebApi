@@ -3,13 +3,12 @@ import { ApiKeyMiddleware } from '../middleware/apiKeyMiddleware';
 import { DestinyApiMiddleware } from '../middleware/destinyApiMiddleware';
 import { StorageMiddleware } from '../middleware/storageMiddleware';
 import { DestinyAuthRouter } from './destinyAuthRoutes';
-import exampleRouter from './exampleRoutes';
-import { ManifestRouter } from './manifestRoutes';
+import { PingRouter } from './pingRoutes';
 import { VendorRoutes } from './vendorRoutes';
 
 const baseRouter = Router();
 
-baseRouter.use('/example', exampleRouter);
+baseRouter.use('/ping', PingRouter);
 
 baseRouter.use('/destinyauth',
 	StorageMiddleware,
@@ -22,12 +21,6 @@ baseRouter.use('/vendor',
 	StorageMiddleware,
 	DestinyApiMiddleware,
 	VendorRoutes
-);
-
-baseRouter.use('/manifest', ApiKeyMiddleware,
-	StorageMiddleware,
-	DestinyApiMiddleware,
-	ManifestRouter
 );
 
 export default baseRouter;

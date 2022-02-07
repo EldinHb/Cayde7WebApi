@@ -1,6 +1,6 @@
 import cookieParser from 'cookie-parser';
 import { Client } from 'discord.js';
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import fs from 'fs';
 import helmet from 'helmet';
 import statusCodes from 'http-status-codes';
@@ -29,7 +29,7 @@ export const setupServer = (discordClient: Client) => {
 
 	app.use('/api', baseRouter);
 
-	app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+	app.use((err: Error, req: Request, res: Response) => {
 		return res.status(BAD_REQUEST).json({
 			error: err.message,
 		});
