@@ -3,11 +3,11 @@ export interface ProfileResponse {
 }
 
 export interface Characters {
-	data: { [key: string]: Data };
+	data: { [key: string]: CharacterData };
 }
 
-export interface Data {
+export interface CharacterData {
 	membershipId: string;
-	membershipType: string;
+	membershipType: number;
 	characterId: string;
 }

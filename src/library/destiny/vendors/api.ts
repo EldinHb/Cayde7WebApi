@@ -1,11 +1,12 @@
 import { AxiosInstance, AxiosResponse } from 'axios';
+import { Sales, VendorsData } from '.';
 import { isSuccesStatusCode } from '../../httpHelpers';
 import { ServerResponse } from '../common';
 import { Components } from '../models/components';
 import { ItemHashes } from '../models/itemHashes';
 import { ProfileResponse } from '../models/profileRequest';
 import { VendorHashes } from '../models/vendorHashes';
-import { getDestinyMembershipData, getProfile } from '../user/api';
+import { getDestinyMembershipData, getFirstCharacter, getProfile } from '../user/api';
 import { VendorSales } from './interfaces';
 
 interface VendorParam {
@@ -76,4 +77,24 @@ export const getAdaModSales = async (client: AxiosInstance) => {
 	});
 
 	return mods;
+};
+
+export const getXurSalesAndLocation = async (client: AxiosInstance) => {
+	const firstCharacter = await getFirstCharacter(client);
+
+	const xur = await getVendor<ServerResponse<{
+		vendor: VendorsData,
+		sales: Sales
+	}>>(client, {
+		characterId: firstCharacter.characterId,
+		membershipId: firstCharacter.membershipId,
+		membershipType: firstCharacter.membershipType,
+		vendorHash: VendorHashes.xur,
+		components: [
+			Components.vendorSales,
+			Components.vendors
+		]
+	});
+
+	return xur;
 };

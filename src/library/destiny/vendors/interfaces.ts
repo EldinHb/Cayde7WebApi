@@ -2,6 +2,20 @@ export interface VendorSales {
 	sales: Sales;
 }
 
+export interface Vendors {
+	vendor: VendorsData;
+}
+
+export interface VendorsData {
+	data: {
+		canPurchase: boolean;
+		vendorLocationIndex: number;
+		vendorHash: number;
+		nextRefreshDate: Date;
+		enabled: boolean;
+	}
+}
+
 export interface Sales {
 	data: { [key: string]: Sale }
 }

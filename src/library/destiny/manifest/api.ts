@@ -1,6 +1,6 @@
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { ServerResponse } from '../common';
-import { InventoryItems, ManifestResponse } from './interfaces';
+import { ManifestResponse } from './interfaces';
 
 type GetManifestResponse = AxiosResponse<ServerResponse<ManifestResponse>>;
 export const getManifest = async (client: AxiosInstance): Promise<GetManifestResponse> => {
@@ -10,7 +10,7 @@ export const getManifest = async (client: AxiosInstance): Promise<GetManifestRes
 	return response;
 };
 
-type ReadContentPathResponse = AxiosResponse<InventoryItems>;
-export const readContentPath = async (client: AxiosInstance, url: string): Promise<ReadContentPathResponse> => {
+type ReadContentPathResponse<T> = AxiosResponse<T>;
+export const readContentPath = async <T>(client: AxiosInstance, url: string): Promise<ReadContentPathResponse<T>> => {
 	return await client.get(url);
 };

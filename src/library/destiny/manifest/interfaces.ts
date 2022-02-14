@@ -16,6 +16,8 @@ export interface ComponentContentLanguages {
 export interface ComponentContentPaths {
 	DestinyInventoryItemLiteDefinition: string;
 	DestinyInventoryItemDefinition: string;
+	DestinyVendorDefinition: string;
+	DestinyDestinationDefinition: string;
 }
 
 export interface InventoryItems {
