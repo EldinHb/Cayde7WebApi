@@ -1,4 +1,5 @@
 import { Client } from 'discord.js';
+import 'dotenv/config';
 import { setupServer } from './server';
 
 const setupDiscord = async () => {

@@ -5,7 +5,7 @@ import { InventoryItems } from '../library/destiny/manifest/interfaces';
 import { DestinyVendorDefinition } from '../library/destiny/models/vendor';
 import { getAdaModSales, getXurSalesAndLocation } from '../library/destiny/vendors';
 import { sendAdaSalesToDiscord } from '../library/discord/ada/api';
-import { createErrorMessage } from '../library/httpHelpers';
+import { createErrorMessage, isSuccesStatusCode } from '../library/httpHelpers';
 
 export const sendAdaSale = async (req: Request, res: Response) => {
 	try {
@@ -42,35 +42,45 @@ export const sendAdaSale = async (req: Request, res: Response) => {
 };
 
 export const xurRequest = async (req: Request, res: Response, next: NextFunction) => {
-	const xur = await getXurSalesAndLocation(req.destinyClient);
-	const manifests = await getManifest(req.destinyClient);
-	const url = manifests
-		.data
-		.Response
-		.jsonWorldComponentContentPaths
-		.en
-		.DestinyVendorDefinition;
-	const vendorDefinitions = await readContentPath<DestinyVendorDefinition>(req.destinyClient, url);
-	const keys = Object.entries(vendorDefinitions.data);
-	const entry = keys
-		.find(x => x[0] === xur.data.Response.vendor.data.vendorHash.toString());
+	try {
+		const xur = await getXurSalesAndLocation(req.destinyClient);
 
-	if (!entry) {
-		return next('couldnt find location');
+		if (!isSuccesStatusCode(xur)) {
+			return next('Couldnt find Xur.');
+		}
+
+		const manifests = await getManifest(req.destinyClient);
+		const url = manifests
+			.data
+			.Response
+			.jsonWorldComponentContentPaths
+			.en
+			.DestinyVendorDefinition;
+		const vendorDefinitions = await readContentPath<DestinyVendorDefinition>(req.destinyClient, url);
+		const keys = Object.entries(vendorDefinitions.data);
+
+		const entry = keys
+			.find(x => x[0] === xur.data.Response.vendor.data.vendorHash.toString());
+
+		if (!entry) {
+			return next('couldnt find location');
+		}
+
+		const destinationUrl = manifests
+			.data
+			.Response
+			.jsonWorldComponentContentPaths
+			.en
+			.DestinyDestinationDefinition;
+		const destinationDefinitions = await readContentPath(req.destinyClient, destinationUrl);
+
+		const xurDefinition: DestinyVendorDefinition = entry[1];
+		const locationHash = xurDefinition.locations[xur.data.Response.vendor.data.vendorLocationIndex];
+		const locationKeys = Object.entries(destinationDefinitions.data as any);
+		const bla = locationKeys.find(x => x[0] === locationHash.destinationHash.toString());
+
+		return res.status(StatusCodes.OK).json(bla);
+	} catch (err) {
+		return next(err);
 	}
-
-	const destinationUrl = manifests
-		.data
-		.Response
-		.jsonWorldComponentContentPaths
-		.en
-		.DestinyDestinationDefinition;
-	const destinationDefinitions = await readContentPath(req.destinyClient, destinationUrl);
-
-	const xurDefinition: DestinyVendorDefinition = entry[1];
-	const locationHash = xurDefinition.locations[xur.data.Response.vendor.data.vendorLocationIndex];
-	const locationKeys = Object.entries(destinationDefinitions.data as any);
-	const bla = locationKeys.find(x => x[0] === locationHash.destinationHash.toString());
-
-	return res.status(StatusCodes.OK).json();
 };
