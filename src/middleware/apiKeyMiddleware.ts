@@ -4,7 +4,10 @@ import { AzureApiKeyStorage } from '../library/storage/azure/azureApiKeyStorage'
 
 export const ApiKeyMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 	const accountName = process.env.STORAGEACCOUNT;
-	const apikey = req.body.apikey as string;
+	const apikey = req.headers.apikey as string;
+	if (!apikey) {
+		return next('Unauthorized. No apikey provided.');
+	}
 	if (!accountName) {
 		throw Error('Account env not set');
 	}

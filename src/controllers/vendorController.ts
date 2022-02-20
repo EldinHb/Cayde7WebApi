@@ -2,9 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { getManifest, readContentPath } from '../library/destiny/manifest/api';
 import { InventoryItems } from '../library/destiny/manifest/interfaces';
+import { DestinyLocation } from '../library/destiny/models/destinyLocation';
 import { DestinyVendorDefinition } from '../library/destiny/models/vendor';
 import { getAdaModSales, getXurSalesAndLocation } from '../library/destiny/vendors';
 import { sendAdaSalesToDiscord } from '../library/discord/ada/api';
+import { sendXurLocationToDiscord } from '../library/discord/xur/api';
 import { createErrorMessage, isSuccesStatusCode } from '../library/httpHelpers';
 
 export const sendAdaSale = async (req: Request, res: Response) => {
@@ -72,14 +74,23 @@ export const xurRequest = async (req: Request, res: Response, next: NextFunction
 			.jsonWorldComponentContentPaths
 			.en
 			.DestinyDestinationDefinition;
-		const destinationDefinitions = await readContentPath(req.destinyClient, destinationUrl);
+		const destinationDefinitions = await readContentPath<DestinyLocation>(req.destinyClient, destinationUrl);
 
 		const xurDefinition: DestinyVendorDefinition = entry[1];
 		const locationHash = xurDefinition.locations[xur.data.Response.vendor.data.vendorLocationIndex];
-		const locationKeys = Object.entries(destinationDefinitions.data as any);
-		const bla = locationKeys.find(x => x[0] === locationHash.destinationHash.toString());
+		const locationKeys = Object.entries(destinationDefinitions.data);
+		const locationEntry: [string, DestinyLocation] | undefined = locationKeys
+			.find(x => x[0] === locationHash.destinationHash.toString());
 
-		return res.status(StatusCodes.OK).json(bla);
+		if (!locationEntry) {
+			return next('Couldnt find location');
+		}
+
+		const location = locationEntry[1];
+
+		sendXurLocationToDiscord(req.discordClient, location);
+
+		return res.status(StatusCodes.OK).json(location);
 	} catch (err) {
 		return next(err);
 	}
