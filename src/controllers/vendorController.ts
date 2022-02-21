@@ -6,7 +6,7 @@ import { DestinyLocation } from '../library/destiny/models/destinyLocation';
 import { DestinyVendorDefinition } from '../library/destiny/models/vendor';
 import { getAdaModSales, getXurSalesAndLocation } from '../library/destiny/vendors';
 import { sendAdaSalesToDiscord } from '../library/discord/ada/api';
-import { sendXurLocationToDiscord } from '../library/discord/xur/api';
+import { sendXurLocationAndSalesToDiscord } from '../library/discord/xur/api';
 import { createErrorMessage, isSuccesStatusCode } from '../library/httpHelpers';
 
 export const sendAdaSale = async (req: Request, res: Response) => {
@@ -58,6 +58,16 @@ export const xurRequest = async (req: Request, res: Response, next: NextFunction
 			.jsonWorldComponentContentPaths
 			.en
 			.DestinyVendorDefinition;
+
+		const itemsUrl = manifests
+			.data
+			.Response
+			.jsonWorldComponentContentPaths
+			.en
+			.DestinyInventoryItemLiteDefinition;
+
+		const itemDefinitionsReq = await readContentPath<InventoryItems>(req.destinyClient, itemsUrl);
+		const itemDefinitions = Object.entries(itemDefinitionsReq.data);
 		const vendorDefinitions = await readContentPath<DestinyVendorDefinition>(req.destinyClient, url);
 		const keys = Object.entries(vendorDefinitions.data);
 
@@ -88,9 +98,22 @@ export const xurRequest = async (req: Request, res: Response, next: NextFunction
 
 		const location = locationEntry[1];
 
-		sendXurLocationToDiscord(req.discordClient, location);
 
-		return res.status(StatusCodes.OK).json(location);
+
+		const itemEntries = Object.entries(xur.data.Response.sales.data);
+		const items = itemEntries.flatMap(([_, sale]) => {
+			const itemDefinition = itemDefinitions.find(d => d[0] === sale.itemHash.toString());
+
+			if (!itemDefinition) {
+				return [];
+			}
+
+			return [itemDefinition[1]];
+		});
+
+		sendXurLocationAndSalesToDiscord(req.discordClient, location, items);
+
+		return res.status(StatusCodes.OK).json('success');
 	} catch (err) {
 		return next(err);
 	}

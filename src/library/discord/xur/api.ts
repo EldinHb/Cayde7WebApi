@@ -1,18 +1,26 @@
-import { Client, MessageEmbed } from 'discord.js';
+import { Client, EmbedFieldData, MessageEmbed } from 'discord.js';
 import { DestinyLocation } from '../../destiny/models/destinyLocation';
+import { InventoryItem } from '../../destiny/models/inventoryItem';
 import { sendDiscordMessage } from '../discordHelpers';
 
-export const sendXurLocationToDiscord = (client: Client, location: DestinyLocation) => {
+export const sendXurLocationAndSalesToDiscord = (client: Client, location: DestinyLocation, sales: InventoryItem[]) => {
 	const dropZone = getDropZone(location.displayProperties.name);
+	const fields: EmbedFieldData[] = sales.map(sale => ({
+		name: sale.displayProperties.name,
+		value: sale.displayProperties.description ? sale.displayProperties.description : 'No description available'
+	}));
 
 	const message = new MessageEmbed()
 		.setColor('DARK_GOLD')
 		.setTitle('Where is Xur?')
-		.setFields([{
-			name: location.displayProperties.name,
-			value: dropZone ?? '',
-			inline: true
-		}]);
+		.setFields([
+			{
+				name: location.displayProperties.name,
+				value: dropZone ?? '',
+				inline: true
+			},
+			...fields
+		]);
 
 	sendDiscordMessage(client, message);
 };
