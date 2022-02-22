@@ -1,7 +1,8 @@
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { AxiosInstance } from 'axios';
-import { Client } from 'discord.js';
+import { DestinyClient } from '../../library/destiny/destinyClient';
 import { DestinyOAuth } from '../../library/destiny/models/destinyOAuth';
+import { DiscordClient } from '../../library/discord/discordClient';
 import { CredentialsStorage } from '../../library/storage/credentialsStorage';
 
 declare global {
@@ -10,7 +11,8 @@ declare global {
 			credentialsStorage: CredentialsStorage;
 			destinyUser: DestinyOAuth;
 			destinyClient: AxiosInstance;
-			discordClient: Client;
+			destiny2Client: DestinyClient | undefined;
+			discordClient: DiscordClient | undefined;
 		}
 	}
 }

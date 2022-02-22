@@ -5,8 +5,6 @@ import { InventoryItems } from '../library/destiny/manifest/interfaces';
 import { DestinyLocation } from '../library/destiny/models/destinyLocation';
 import { DestinyVendorDefinition } from '../library/destiny/models/vendor';
 import { getAdaModSales, getXurSalesAndLocation } from '../library/destiny/vendors';
-import { sendAdaSalesToDiscord } from '../library/discord/ada/api';
-import { sendXurLocationAndSalesToDiscord } from '../library/discord/xur/api';
 import { createErrorMessage, isSuccesStatusCode } from '../library/httpHelpers';
 
 export const sendAdaSale = async (req: Request, res: Response) => {
@@ -32,7 +30,7 @@ export const sendAdaSale = async (req: Request, res: Response) => {
 			return [];
 		});
 
-		await sendAdaSalesToDiscord(req.discordClient, mods);
+		// await sendAdaSalesToDiscord(req.discordClient, mods);
 		return res.status(200).json(mods);
 	} catch (err) {
 		if (err instanceof Error) {
@@ -111,7 +109,7 @@ export const xurRequest = async (req: Request, res: Response, next: NextFunction
 			return [itemDefinition[1]];
 		});
 
-		sendXurLocationAndSalesToDiscord(req.discordClient, location, items);
+		// sendXurLocationAndSalesToDiscord(req.discordClient, location, items);
 
 		return res.status(StatusCodes.OK).json('success');
 	} catch (err) {

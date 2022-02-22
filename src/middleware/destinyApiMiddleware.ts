@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
-import { refreshTokenDestiny } from '../library/destiny/authentication';
+import { DestinyClient } from '../library/destiny/destinyClient';
 import { createHttpClient } from '../library/destiny/destinyHttpClient';
 import { DestinyOAuth } from '../library/destiny/models/destinyOAuth';
 import { CredentialsStorage } from '../library/storage/credentialsStorage';
@@ -35,7 +35,7 @@ export const DestinyApiMiddleware = async (req: Request, res: Response, next: Ne
 };
 
 const refreshToken = async (refreshToken: string, storage: CredentialsStorage): Promise<DestinyOAuth> => {
-	const refreshedUser = await refreshTokenDestiny({
+	const refreshedUser = await DestinyClient.refreshToken({
 		clientId: process.env.DESTINYCLIENTID || '',
 		clientSecret: process.env.DESTINYCLIENTSECRET || '',
 		code: refreshToken
