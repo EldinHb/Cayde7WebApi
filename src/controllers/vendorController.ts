@@ -9,7 +9,7 @@ import { sendAdaSalesToDiscord } from '../library/discord/ada/api';
 import { sendXurLocationAndSalesToDiscord } from '../library/discord/xur/api';
 import { createErrorMessage, isSuccesStatusCode } from '../library/httpHelpers';
 
-export const sendAdaSale = async (req: Request, res: Response) => {
+export const sendAdaSale = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const modSales = await getAdaModSales(req.destinyClient);
 
@@ -31,6 +31,10 @@ export const sendAdaSale = async (req: Request, res: Response) => {
 
 			return [];
 		});
+
+		if (!mods.length) {
+			return next('no sales found');
+		}
 
 		await sendAdaSalesToDiscord(req.discordClient, mods);
 		return res.status(200).json(mods);
