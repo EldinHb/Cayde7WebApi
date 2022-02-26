@@ -3,13 +3,14 @@ import { StatusCodes } from 'http-status-codes';
 import { getManifest, readContentPath } from '../library/destiny/manifest/api';
 import { InventoryItems } from '../library/destiny/manifest/interfaces';
 import { DestinyLocation } from '../library/destiny/models/destinyLocation';
+import { ItemType } from '../library/destiny/models/itemTypes';
 import { DestinyVendorDefinition } from '../library/destiny/models/vendor';
 import { getAdaModSales, getXurSalesAndLocation } from '../library/destiny/vendors';
 import { sendAdaSalesToDiscord } from '../library/discord/ada/api';
 import { sendXurLocationAndSalesToDiscord } from '../library/discord/xur/api';
 import { createErrorMessage, isSuccesStatusCode } from '../library/httpHelpers';
 
-export const sendAdaSale = async (req: Request, res: Response) => {
+export const sendAdaSale = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const modSales = await getAdaModSales(req.destinyClient);
 
@@ -25,12 +26,16 @@ export const sendAdaSale = async (req: Request, res: Response) => {
 		const itemEntries = Object.entries(inventoryItems.data);
 		const mods = modSales.flatMap(x => {
 			const mod = itemEntries.find(d => d[0] === x.itemHash.toString());
-			if (mod) {
+			if (mod && mod[1].itemType === ItemType.mod) {
 				return mod[1];
 			}
 
 			return [];
 		});
+
+		if (!mods.length) {
+			return next('no sales found');
+		}
 
 		await sendAdaSalesToDiscord(req.discordClient, mods);
 		return res.status(200).json(mods);

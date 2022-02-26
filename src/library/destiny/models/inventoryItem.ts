@@ -1,6 +1,7 @@
 export interface InventoryItem {
 	displayProperties: DisplayProperties;
 	itemTypeDisplayName: string;
+	itemType: number;
 }
 
 export interface DisplayProperties {

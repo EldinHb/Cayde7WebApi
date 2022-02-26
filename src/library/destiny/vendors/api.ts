@@ -3,7 +3,6 @@ import { Sales, VendorsData } from '.';
 import { isSuccesStatusCode } from '../../httpHelpers';
 import { ServerResponse } from '../common';
 import { Components } from '../models/components';
-import { ItemHashes } from '../models/itemHashes';
 import { ProfileResponse } from '../models/profileRequest';
 import { VendorHashes } from '../models/vendorHashes';
 import { getDestinyMembershipData, getFirstCharacter, getProfile } from '../user/api';
@@ -67,16 +66,9 @@ export const getAdaModSales = async (client: AxiosInstance) => {
 		vendorHash: VendorHashes.ada
 	});
 
-	const saleKeys = Object.entries(adaSales.data.Response.sales.data);
-	const mods = saleKeys.flatMap(([_, sale]) => {
-		if (sale.costs.find(x => x.itemHash === ItemHashes.modComponents)) {
-			return sale;
-		}
+	const saleKeys = Object.values(adaSales.data.Response.sales.data);
 
-		return [];
-	});
-
-	return mods;
+	return saleKeys;
 };
 
 export const getXurSalesAndLocation = async (client: AxiosInstance) => {
