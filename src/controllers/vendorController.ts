@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { getManifest, readContentPath } from '../library/destiny/manifest/api';
 import { InventoryItems } from '../library/destiny/manifest/interfaces';
 import { DestinyLocation } from '../library/destiny/models/destinyLocation';
+import { ItemType } from '../library/destiny/models/itemTypes';
 import { DestinyVendorDefinition } from '../library/destiny/models/vendor';
 import { getAdaModSales, getXurSalesAndLocation } from '../library/destiny/vendors';
 import { sendAdaSalesToDiscord } from '../library/discord/ada/api';
@@ -25,7 +26,7 @@ export const sendAdaSale = async (req: Request, res: Response, next: NextFunctio
 		const itemEntries = Object.entries(inventoryItems.data);
 		const mods = modSales.flatMap(x => {
 			const mod = itemEntries.find(d => d[0] === x.itemHash.toString());
-			if (mod) {
+			if (mod && mod[1].itemType === ItemType.mod) {
 				return mod[1];
 			}
 
