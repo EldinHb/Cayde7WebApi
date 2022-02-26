@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { sendAdaSale, xurRequest } from '../controllers/vendorController';
+import { Destiny2Controller } from '../controllers/destiny2.controller';
 
 const VendorRoutes = Router();
 
-VendorRoutes.get('/adasale', sendAdaSale);
-VendorRoutes.get('/xur', xurRequest);
+VendorRoutes.get('/adasale', Destiny2Controller.adaSales);
+// VendorRoutes.get('/xur', xurRequest);
 
 export { VendorRoutes };
+

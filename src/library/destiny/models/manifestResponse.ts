@@ -1,4 +1,4 @@
-import { InventoryItem } from '../models/inventoryItem';
+import { InventoryItem } from './inventoryItem';
 
 export interface ManifestResponse {
 	jsonWorldContentPaths: ManifestLanguages;

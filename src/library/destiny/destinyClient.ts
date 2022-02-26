@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
-import { authenticateDestiny, AuthenticationConfig, refreshTokenDestiny } from './authentication';
+import { URLSearchParams } from 'url';
 import { Destiny2Api } from './destiny2/destiny2Api';
+import { AuthenticationConfig } from './models/authenticationConfig';
 import { DestinyUserApi } from './user/destinyUserApi';
-
 export class DestinyClient {
 	private readonly httpClient: AxiosInstance;
 
@@ -35,10 +35,42 @@ export class DestinyClient {
 	}
 
 	public static async authenticate(config: AuthenticationConfig) {
-		return authenticateDestiny(config);
+		const data = new URLSearchParams();
+		data.append('grant_type', 'authorization_code');
+		data.append('code', config.code);
+		data.append('client_id', config.clientId);
+		data.append('client_secret', config.clientSecret);
+
+		const response = await axios('https://www.bungie.net/Platform/App/OAuth/token/', {
+			data,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			method: 'POST'
+		});
+		return response;
 	}
 
 	public static async refreshToken(config: AuthenticationConfig) {
-		return refreshTokenDestiny(config);
+		const data = new URLSearchParams();
+		data.append('grant_type', 'refresh_token');
+		data.append('refresh_token', config.code);
+		data.append('client_id', config.clientId);
+		data.append('client_secret', config.clientSecret);
+
+		try {
+			const response = await axios('https://www.bungie.net/Platform/App/OAuth/token/', {
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				data,
+				method: 'POST'
+			});
+
+			return response;
+		} catch (err) {
+			console.log(err);
+			return;
+		}
 	}
 }

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
 import { DestinyClient } from '../library/destiny/destinyClient';
 import { createHttpClient } from '../library/destiny/destinyHttpClient';
+import { DestinyRepository } from '../library/destiny/destinyRepository';
 import { DestinyOAuth } from '../library/destiny/models/destinyOAuth';
 import { CredentialsStorage } from '../library/storage/credentialsStorage';
 
@@ -31,6 +32,8 @@ export const DestinyApiMiddleware = async (req: Request, res: Response, next: Ne
 		accessToken: destinyUser.access_token
 	});
 
+	req.destiny2Client = new DestinyClient(apiKey, destinyUser.access_token);
+	req.destinyRepository = new DestinyRepository(req.destiny2Client);
 	next();
 };
 
