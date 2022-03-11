@@ -1,16 +1,17 @@
-import { CharactersFactory } from './characterFactory';
-import { DestinyClient } from './destinyClient';
+import { IDestinyClient } from './destinyClient';
 
-export class DestinyRepository {
+export interface IDestinyRepository {
+	getAdaSales(): Promise<void>;
+}
 
-	private characterFactory: CharactersFactory;
+export class DestinyRepository implements IDestinyRepository {
+	public readonly destinyClient: IDestinyClient;
 
-	constructor(public readonly client: DestinyClient) {
-		this.characterFactory = new CharactersFactory(client);
+	constructor(client: IDestinyClient) {
+		this.destinyClient = client;
 	}
 
 	public async getAdaSales() {
-		const characters = await this.characterFactory.getCharacters();
-		console.log(characters);
+		console.log('get ada sales');
 	}
 }

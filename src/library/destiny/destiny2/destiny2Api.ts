@@ -8,7 +8,7 @@ export class Destiny2Api extends DestinyApi {
 	private baseUrl = '/platform/destiny2';
 
 	public async getProfile<T>(params: GetProfileParams) {
-		return await this.httpClient.get<ServerResponse<T>>(
+		return await this.request<T>(
 			`${this.baseUrl}/${params.membershipType}/profile/${params.destinyMembershipId}`,
 			{
 				params: {
@@ -18,9 +18,9 @@ export class Destiny2Api extends DestinyApi {
 	}
 
 	public async getDestinyManifest(): Promise<AxiosResponse<ServerResponse<ManifestResponse>>> {
-		return await this.httpClient({
-			url: `/${this.baseUrl}/manifest`
-		});
+		return await this.request(
+			`/${this.baseUrl}/manifest`
+		);
 	}
 
 	public async getVendor<T>(params: GetVendorParams) {
@@ -33,7 +33,7 @@ export class Destiny2Api extends DestinyApi {
 			'/vendors' +
 			`/${params.vendorHash}`;
 
-		return this.httpClient.get<ServerResponse<T>>(url, {
+		return await this.request<T>(url, {
 			params: {
 				components: params.components.join(',')
 			}
