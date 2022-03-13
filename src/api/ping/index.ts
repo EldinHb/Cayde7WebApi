@@ -1,0 +1,1 @@
+export { pingRouter } from './routes';

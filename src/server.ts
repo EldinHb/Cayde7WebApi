@@ -1,13 +1,13 @@
 import cookieParser from 'cookie-parser';
 import { Client } from 'discord.js';
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
 import helmet from 'helmet';
 import statusCodes from 'http-status-codes';
 import https from 'https';
+import { apiRoutes } from './api/apiRoutes';
 import { DiscordMiddleware } from './middleware/discordMiddleware';
 import { Logger as customLogger } from './middleware/logger';
-import baseRouter from './routes';
 
 export const setupServer = (discordClient: Client) => {
 	const { BAD_REQUEST } = statusCodes;
@@ -27,12 +27,10 @@ export const setupServer = (discordClient: Client) => {
 		app.use(helmet());
 	}
 
-	app.use('/api', baseRouter);
+	app.use('/api', apiRoutes);
 
-	app.use((err: Error, req: Request, res: Response) => {
-		return res.status(BAD_REQUEST).json({
-			error: err.message,
-		});
+	app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+		return res.status(statusCodes.BAD_REQUEST).json(err);
 	});
 
 	const port = Number(process.env.PORT || 3000);

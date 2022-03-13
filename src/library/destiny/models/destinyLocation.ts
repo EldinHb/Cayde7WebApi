@@ -1,3 +1,7 @@
+export interface DestinyLocationResponse {
+	[key: string]: DestinyLocation;
+}
+
 export interface DestinyLocation {
 	displayProperties: DestinyLocationDisplayProperties;
 }
