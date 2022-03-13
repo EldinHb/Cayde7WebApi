@@ -29,7 +29,7 @@ export const DestinyApiMiddleware = async (req: Request, res: Response, next: Ne
 	}
 
 	req.destinyUser = destinyUser;
-	req.destiny2Client = new DestinyClient(apiKey, user.access_token);
+	req.destiny2Client = new DestinyClient(apiKey, destinyUser.access_token);
 	req.destinyRepository = new DestinyRepository(req.destiny2Client);
 	next();
 };

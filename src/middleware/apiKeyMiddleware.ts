@@ -9,7 +9,7 @@ export const ApiKeyMiddleware = async (req: Request, res: Response, next: NextFu
 		return next('Unauthorized. No apikey provided.');
 	}
 	if (!accountName) {
-		throw Error('Account env not set');
+		return next('Account env not set');
 	}
 	const client = new AzureApiKeyStorage(accountName, 'apikeys');
 	const entity = await client.getApiKeyAsync(apikey);

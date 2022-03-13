@@ -1,4 +1,4 @@
-import { AxiosInstance, Method } from 'axios';
+import { AxiosInstance, AxiosResponse, Method } from 'axios';
 import { SimpleCache } from '../cache/simpleCache';
 import { ServerResponse } from './common';
 
@@ -9,12 +9,14 @@ interface RequestConfig {
 
 export abstract class DestinyApi {
 
-	constructor(protected readonly httpClient: AxiosInstance, private readonly cache: SimpleCache) { }
+	constructor(
+		protected readonly httpClient: AxiosInstance,
+		private readonly cache: SimpleCache) { }
 
 	protected async request<T>(url: string, config?: RequestConfig, refresh = false) {
 		const cacheKey = this.createCacheKey(url, config && config.params);
 		if (this.cache.has(cacheKey) && !refresh) {
-			return this.cache.get(cacheKey);
+			return this.cache.get(cacheKey) as AxiosResponse<ServerResponse<T>>;
 		}
 
 		const result = await this.httpClient.get<ServerResponse<T>>(url, {

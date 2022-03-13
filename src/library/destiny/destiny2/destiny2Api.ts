@@ -19,12 +19,16 @@ export class Destiny2Api extends DestinyApi {
 
 	public async getDestinyManifest(): Promise<AxiosResponse<ServerResponse<ManifestResponse>>> {
 		return await this.request(
-			`/${this.baseUrl}/manifest`
+			`${this.baseUrl}/manifest`
 		);
 	}
 
+	public async readContentPath<T>(url: string) {
+		return await this.httpClient.get<T>(url);
+	}
+
 	public async getVendor<T>(params: GetVendorParams) {
-		const url = `/${this.baseUrl}` +
+		const url = `${this.baseUrl}` +
 			`/${params.membershipType}` +
 			'/profile' +
 			`/${params.destinyMembershipId}` +
