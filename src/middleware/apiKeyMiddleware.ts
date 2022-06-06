@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { AzureApiKeyStorage } from '../library/storage/azure/azureApiKeyStorage';
+import { JsonApiKeyStorage } from '../library/storage/jsonStorage/jsonApiKeyStorage';
 
 export const ApiKeyMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 	const accountName = process.env.STORAGEACCOUNT;
@@ -11,7 +11,8 @@ export const ApiKeyMiddleware = async (req: Request, res: Response, next: NextFu
 	if (!accountName) {
 		return next('Account env not set');
 	}
-	const client = new AzureApiKeyStorage(accountName, 'apikeys');
+	// const client = new AzureApiKeyStorage(accountName, 'apikeys');
+	const client = new JsonApiKeyStorage();
 	const entity = await client.getApiKeyAsync(apikey);
 	if (!entity) {
 		return res.status(StatusCodes.UNAUTHORIZED).json('Unauthorized access');
